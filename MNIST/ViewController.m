@@ -7,6 +7,8 @@
 //
 
 #import "ViewController.h"
+#import "MLLoadMNIST.h"
+#import <Accelerate/Accelerate.h>
 
 @interface ViewController ()
 
@@ -17,6 +19,46 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+//    float mat1[3][3][1][2] = {{{
+//        {1,2,3},
+//        {2,3,4},
+//        {4,5,6}},
+//        {
+//            {0,0,0},
+//            {0,0,0},
+//            {1,1,1}}}};
+//    float mat2[3] = {1,2,3};
+//    float res[3] = {};
+//    cblas_sgemv(CblasRowMajor, CblasNoTrans, 3, 3, 1.0f, (float *)mat1[0][1], 3, mat2, 1, 1.0f, res, 1);
+//    vDSP_mmul(*mat1[0][1], 1, mat2, 1, res, 1, 3, 1, 3);
+//    
+//    
+//    float inVector1[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+//    float inVector2[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+//    float outVector[8];
+//    
+//    vDSP_vadd(inVector1, 1, inVector2, 1, outVector, 1, 8);
+    
+    
+//    MLLoadMNIST *loader = [[MLLoadMNIST alloc] init];
+//    NSArray *trainImage = [loader readImageData:@"/Users/Jiao/Desktop/MNIST/train-images-idx3-ubyte"];
+//    NSArray *trainLabel = [loader readLabelData:@"/Users/Jiao/Desktop/MNIST/train-labels-idx1-ubyte"];
+    
+    double **trainImage = readImageData("/Users/Jiao/Desktop/MNIST/train-images-idx3-ubyte");
+    int *trainLabel = readLabelData("/Users/Jiao/Desktop/MNIST/train-labels-idx1-ubyte");
+    
+    if (trainImage != NULL) {
+        for (int i = 0; i < 60000; i++) {
+            free(trainImage[i]);
+            trainImage[i] = NULL;
+        }
+        free(trainImage);
+        trainImage = NULL;
+    }
+    if (trainLabel != NULL) {
+        free(trainLabel);
+        trainLabel = NULL;
+    }
 }
 
 - (void)didReceiveMemoryWarning {

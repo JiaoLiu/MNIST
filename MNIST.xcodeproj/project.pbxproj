@@ -15,6 +15,8 @@
 		0F18C3711D94D8A8007E2185 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F18C36F1D94D8A8007E2185 /* LaunchScreen.storyboard */; };
 		0F18C37C1D94D8A8007E2185 /* MNISTTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F18C37B1D94D8A8007E2185 /* MNISTTests.m */; };
 		0F18C3871D94D8A8007E2185 /* MNISTUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F18C3861D94D8A8007E2185 /* MNISTUITests.m */; };
+		0F18C3951D94D908007E2185 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F18C3941D94D908007E2185 /* Accelerate.framework */; };
+		0F18C3981D94D95B007E2185 /* MLLoadMNIST.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F18C3971D94D95B007E2185 /* MLLoadMNIST.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,9 @@
 		0F18C3821D94D8A8007E2185 /* MNISTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MNISTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F18C3861D94D8A8007E2185 /* MNISTUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MNISTUITests.m; sourceTree = "<group>"; };
 		0F18C3881D94D8A8007E2185 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0F18C3941D94D908007E2185 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		0F18C3961D94D95B007E2185 /* MLLoadMNIST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLLoadMNIST.h; sourceTree = "<group>"; };
+		0F18C3971D94D95B007E2185 /* MLLoadMNIST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLLoadMNIST.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F18C3951D94D908007E2185 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,10 +111,13 @@
 				0F18C3651D94D8A7007E2185 /* AppDelegate.m */,
 				0F18C3671D94D8A7007E2185 /* ViewController.h */,
 				0F18C3681D94D8A7007E2185 /* ViewController.m */,
+				0F18C3961D94D95B007E2185 /* MLLoadMNIST.h */,
+				0F18C3971D94D95B007E2185 /* MLLoadMNIST.m */,
 				0F18C36A1D94D8A7007E2185 /* Main.storyboard */,
 				0F18C36D1D94D8A8007E2185 /* Assets.xcassets */,
 				0F18C36F1D94D8A8007E2185 /* LaunchScreen.storyboard */,
 				0F18C3721D94D8A8007E2185 /* Info.plist */,
+				0F18C3941D94D908007E2185 /* Accelerate.framework */,
 				0F18C3611D94D8A7007E2185 /* Supporting Files */,
 			);
 			path = MNIST;
@@ -202,6 +211,7 @@
 		0F18C3561D94D8A7007E2185 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = ML;
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = ChangHong;
 				TargetAttributes = {
@@ -270,6 +280,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F18C3981D94D95B007E2185 /* MLLoadMNIST.m in Sources */,
 				0F18C3691D94D8A7007E2185 /* ViewController.m in Sources */,
 				0F18C3661D94D8A7007E2185 /* AppDelegate.m in Sources */,
 				0F18C3631D94D8A7007E2185 /* main.m in Sources */,
@@ -498,6 +509,7 @@
 				0F18C38D1D94D8A8007E2185 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0F18C38E1D94D8A8007E2185 /* Build configuration list for PBXNativeTarget "MNISTTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +518,7 @@
 				0F18C3901D94D8A8007E2185 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0F18C3911D94D8A8007E2185 /* Build configuration list for PBXNativeTarget "MNISTUITests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +527,7 @@
 				0F18C3931D94D8A8007E2185 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
