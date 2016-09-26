@@ -20,7 +20,7 @@ int reverseInt(int input)
     return((int)ch1<<24)+((int)ch2<<16)+((int)ch3<<8)+ch4;
 }
 
-double **readImageData(char *filePath)
+double **readImageData(const char *filePath)
 {
     FILE *file = fopen(filePath, "rb");
     double **output = NULL;
@@ -56,7 +56,7 @@ double **readImageData(char *filePath)
     return output;
 }
 
-int *readLabelData(char *filePath)
+int *readLabelData(const char *filePath)
 {
     FILE *file = fopen(filePath, "rb");
     int *output = NULL;

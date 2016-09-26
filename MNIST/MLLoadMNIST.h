@@ -12,7 +12,7 @@
 
 - (NSArray *)readImageData:(NSString *)filePath;
 - (NSArray *)readLabelData:(NSString *)filePath;
-double **readImageData(char *filePath);
-int *readLabelData(char *filePath);
+double **readImageData(const char *filePath);
+int *readLabelData(const char *filePath);
 
 @end

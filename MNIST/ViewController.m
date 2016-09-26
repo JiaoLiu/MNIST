@@ -44,9 +44,22 @@
 //    NSArray *trainImage = [loader readImageData:@"/Users/Jiao/Desktop/MNIST/train-images-idx3-ubyte"];
 //    NSArray *trainLabel = [loader readLabelData:@"/Users/Jiao/Desktop/MNIST/train-labels-idx1-ubyte"];
     
-    double **trainImage = readImageData("/Users/Jiao/Desktop/MNIST/train-images-idx3-ubyte");
-    int *trainLabel = readLabelData("/Users/Jiao/Desktop/MNIST/train-labels-idx1-ubyte");
+    [self startCalculation];
+}
+
+- (void)startCalculation
+{
+    NSString *bundlepPath = [[NSBundle mainBundle] resourcePath];
+    double **trainImage = readImageData([[bundlepPath stringByAppendingString:@"/train-images-idx3-ubyte"] UTF8String]);
+    int *trainLabel = readLabelData([[bundlepPath stringByAppendingString:@"/train-labels-idx1-ubyte"] UTF8String]);
     
+    
+    
+    
+    double **testImage = readImageData([[bundlepPath stringByAppendingString:@"/t10k-images-idx3-ubyte"] UTF8String]);
+    int *testLabel = readLabelData([[bundlepPath stringByAppendingString:@"/t10k-labels-idx1-ubyte"] UTF8String]);
+
+    /* free memory */
     if (trainImage != NULL) {
         for (int i = 0; i < 60000; i++) {
             free(trainImage[i]);
@@ -58,6 +71,19 @@
     if (trainLabel != NULL) {
         free(trainLabel);
         trainLabel = NULL;
+    }
+    
+    if (testImage != NULL) {
+        for (int i = 0; i < 10000; i++) {
+            free(testImage[i]);
+            testImage[i] = NULL;
+        }
+        free(testImage);
+        testImage = NULL;
+    }
+    if (testLabel != NULL) {
+        free(testLabel);
+        testLabel = NULL;
     }
 }
 
