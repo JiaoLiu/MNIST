@@ -10,26 +10,24 @@
 
 @implementation MLSoftMax
 
-- (id)initWithLoopNum:(int)loopNum dim:(int)dim type:(int)type size:(int)size
+- (id)initWithLoopNum:(int)loopNum dim:(int)dim type:(int)type size:(int)size descentRate:(double)rate
 {
     self = [super init];
     if (self) {
-        _iterNum = loopNum;
+        _iterNum = loopNum == 0 ? 500 : loopNum;
         _dim = dim;
         _kType = type;
-        _randSize = size;
+        _randSize = size == 0 ? 100 : size;
         _bias = malloc(sizeof(double) * type);
         _theta = malloc(sizeof(double) * type * dim);
         for (int i = 0; i < type; i++) {
             _bias[i] = 0;
-//            _theta[i] = malloc(sizeof(double) * dim);
             for (int j = 0; j < dim; j++) {
                 _theta[i * dim +j] = 0.0f;
             }
         }
-        if (_descentRate == 0) {
-            _descentRate = 0.01;
-        }
+        
+        _descentRate = rate == 0 ? 0.01 : rate;
     }
     return  self;
 }
@@ -42,10 +40,6 @@
     }
     
     if (_theta != NULL) {
-//        for (int i = 0; i < _kType; i++) {
-//            free(_theta[i]);
-//            _theta[i] = NULL;
-//        }
         free(_theta);
         _theta = NULL;
     }
@@ -223,6 +217,18 @@
     }
 }
 
+- (void)saveTrainDataToDisk
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *thetaPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/Theta.txt"];
+//    NSLog(@"%@",thetaPath);
+    NSData *data = [NSData dataWithBytes:_theta length:sizeof(double) *  _dim * _kType];
+    [fileManager createFileAtPath:thetaPath contents:data attributes:nil];
+    
+    NSString *biasPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/bias.txt"];
+    data = [NSData dataWithBytes:_bias length:sizeof(double) * _kType];
+    [fileManager createFileAtPath:biasPath contents:data attributes:nil];
+}
 
 - (int)predict:(double *)image
 {
@@ -231,6 +237,22 @@
     double *index = malloc(sizeof(double) * _kType);
     vDSP_mmulD(_theta, 1, image, 1, index, 1, _kType, 1, _dim);
     vDSP_vaddD(index, 1, _bias, 1, index, 1, _kType);
+    for (int i = 0; i < _kType; i++) {
+        if (index[i] > maxNum) {
+            maxNum = index[i];
+            label = i;
+        }
+    }
+    return label;
+}
+
+- (int)predict:(double *)image withOldTheta:(double *)theta andBias:(double *)bias
+{
+    double maxNum = -0xffffff;
+    int label = -1;
+    double *index = malloc(sizeof(double) * _kType);
+    vDSP_mmulD(theta, 1, image, 1, index, 1, _kType, 1, _dim);
+    vDSP_vaddD(index, 1, bias, 1, index, 1, _kType);
     for (int i = 0; i < _kType; i++) {
         if (index[i] > maxNum) {
             maxNum = index[i];

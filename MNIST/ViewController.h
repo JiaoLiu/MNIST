@@ -10,6 +10,10 @@
 
 @interface ViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UITextView *outputView;
+@property (weak, nonatomic) IBOutlet UITextField *LoopNumText;
+@property (weak, nonatomic) IBOutlet UITextField *LoopSizeText;
+@property (weak, nonatomic) IBOutlet UITextField *DrateText;
 
 @end
 

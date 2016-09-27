@@ -13,9 +13,8 @@
 {
     @private
     int _iterNum;
-    int _kType;
-    int _dim;
     int _randSize;
+    double _descentRate;
     double **_randomX;
     int *_randomY;
     double *_theta;
@@ -25,10 +24,13 @@
 @property (nonatomic, assign) double **image;
 @property (nonatomic, assign) int *label;
 @property (nonatomic, assign) int trainNum;
-@property (nonatomic, assign) double descentRate;
+@property (nonatomic, assign) int kType;
+@property (nonatomic, assign) int dim;
 
-- (id)initWithLoopNum:(int)loopNum dim:(int)dim type:(int)type size:(int)size;
+- (id)initWithLoopNum:(int)loopNum dim:(int)dim type:(int)type size:(int)size descentRate:(double)rate;
 - (void)train;
 - (int)predict:(double *)image;
+- (void)saveTrainDataToDisk;
+- (int)predict:(double *)image withOldTheta:(double *)theta andBias:(double *)bias;
 
 @end

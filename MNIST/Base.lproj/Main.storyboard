@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,11 +17,74 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AOv-Fp-uQH">
+                                <rect key="frame" x="70" y="70" width="34" height="30"/>
+                                <state key="normal" title="Train"/>
+                                <connections>
+                                    <action selector="startTrain:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bEo-N9-g8P"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3ZK-Av-1yc">
+                                <rect key="frame" x="484" y="70" width="44" height="30"/>
+                                <state key="normal" title="Check"/>
+                                <connections>
+                                    <action selector="startCheckModel:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kut-dy-vut"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4QM-Gp-H4H">
+                                <rect key="frame" x="20" y="320" width="560" height="280"/>
+                                <color key="backgroundColor" red="1" green="0.96537282300000005" blue="0.26148028909999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="500" borderStyle="roundedRect" placeholder="LoopNum(int)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FR4-GM-B6w">
+                                <rect key="frame" x="70" y="130" width="460" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="100" borderStyle="roundedRect" placeholder="LoopSize(int)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9wD-0q-CNx">
+                                <rect key="frame" x="70" y="190" width="460" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="0.01" borderStyle="roundedRect" placeholder="DescentRate(double)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dRV-m8-TNO">
+                                <rect key="frame" x="70" y="250" width="460" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
+                            </textField>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="dRV-m8-TNO" secondAttribute="trailing" constant="50" id="1sv-y3-dJY"/>
+                            <constraint firstItem="4QM-Gp-H4H" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5qJ-kI-VMR"/>
+                            <constraint firstItem="9wD-0q-CNx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="50" id="Byc-DY-9Ww"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="4QM-Gp-H4H" secondAttribute="bottom" id="Cp1-wM-Tbr"/>
+                            <constraint firstItem="9wD-0q-CNx" firstAttribute="top" secondItem="FR4-GM-B6w" secondAttribute="bottom" constant="30" id="HZ0-ed-Z3E"/>
+                            <constraint firstItem="AOv-Fp-uQH" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="50" id="IH2-dE-EFi"/>
+                            <constraint firstItem="3ZK-Av-1yc" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="50" id="JqD-ij-cxr"/>
+                            <constraint firstItem="FR4-GM-B6w" firstAttribute="top" secondItem="3ZK-Av-1yc" secondAttribute="bottom" constant="30" id="KBW-48-NCC"/>
+                            <constraint firstItem="AOv-Fp-uQH" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="50" id="MJ9-0D-jJA"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="9wD-0q-CNx" secondAttribute="trailing" constant="50" id="Oyx-LJ-K8K"/>
+                            <constraint firstItem="4QM-Gp-H4H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="300" id="U45-9s-lNa"/>
+                            <constraint firstItem="dRV-m8-TNO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="50" id="WQl-Sb-f0C"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="FR4-GM-B6w" secondAttribute="trailing" constant="50" id="YFd-DJ-Kx3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="4QM-Gp-H4H" secondAttribute="trailing" id="Ybo-Yb-roH"/>
+                            <constraint firstItem="FR4-GM-B6w" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="50" id="Z1S-sq-wOa"/>
+                            <constraint firstItem="dRV-m8-TNO" firstAttribute="top" secondItem="9wD-0q-CNx" secondAttribute="bottom" constant="30" id="p7E-R8-hYH"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="3ZK-Av-1yc" secondAttribute="trailing" constant="50" id="x1Q-yV-ave"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="DrateText" destination="dRV-m8-TNO" id="jLI-4Y-Vmd"/>
+                        <outlet property="LoopNumText" destination="FR4-GM-B6w" id="hPf-Uy-qpl"/>
+                        <outlet property="LoopSizeText" destination="9wD-0q-CNx" id="hDg-Vc-ggD"/>
+                        <outlet property="outputView" destination="4QM-Gp-H4H" id="dup-xd-nlG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="258" y="246"/>
         </scene>
     </scenes>
 </document>
