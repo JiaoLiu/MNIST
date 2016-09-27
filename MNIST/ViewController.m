@@ -9,6 +9,10 @@
 #import "ViewController.h"
 #import "MLLoadMNIST.h"
 #import <Accelerate/Accelerate.h>
+#import "MLSoftMax.h"
+
+static const int trainNum = 60000;
+static const int testNum = 10000;
 
 @interface ViewController ()
 
@@ -53,15 +57,29 @@
     double **trainImage = readImageData([[bundlepPath stringByAppendingString:@"/train-images-idx3-ubyte"] UTF8String]);
     int *trainLabel = readLabelData([[bundlepPath stringByAppendingString:@"/train-labels-idx1-ubyte"] UTF8String]);
     
-    
-    
+    MLSoftMax *softMax = [[MLSoftMax alloc] initWithLoopNum:500 dim:28*28 type:10 size:100];
+    softMax.image = trainImage;
+    softMax.label = trainLabel;
+    softMax.trainNum = trainNum;
+    softMax.descentRate = 0.01;
+    [softMax train];
     
     double **testImage = readImageData([[bundlepPath stringByAppendingString:@"/t10k-images-idx3-ubyte"] UTF8String]);
     int *testLabel = readLabelData([[bundlepPath stringByAppendingString:@"/t10k-labels-idx1-ubyte"] UTF8String]);
+    
+    int correct = 0;
+    for (int i = 0; i < testNum; i++) {
+        int pred = [softMax predict:testImage[i]];
+        if (pred == testLabel[i]) {
+            correct++;
+        }
+        printf("%d - %d \n",testLabel[i],pred);
+    }
+    printf("%f",correct / 10000.0);
 
     /* free memory */
     if (trainImage != NULL) {
-        for (int i = 0; i < 60000; i++) {
+        for (int i = 0; i < trainNum; i++) {
             free(trainImage[i]);
             trainImage[i] = NULL;
         }
@@ -74,7 +92,7 @@
     }
     
     if (testImage != NULL) {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < testNum; i++) {
             free(testImage[i]);
             testImage[i] = NULL;
         }
