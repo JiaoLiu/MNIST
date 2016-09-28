@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Accelerate/Accelerate.h>
+#import "MLCnn.h"
 
 @interface MLSoftMax : NSObject
 {

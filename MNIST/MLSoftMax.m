@@ -20,9 +20,11 @@
         _randSize = size == 0 ? 100 : size;
         _bias = malloc(sizeof(double) * type);
         _theta = malloc(sizeof(double) * type * dim);
-        double fillNum = 0.0f;
-        vDSP_vfillD(&fillNum, _bias, 1, type);
+        double fillNum = [MLCnn truncated_normal:0 dev:0.1];
         vDSP_vfillD(&fillNum, _theta, 1, type * dim);
+        fillNum = 0.1f;
+        vDSP_vfillD(&fillNum, _bias, 1, type);
+        
 //        for (int i = 0; i < type; i++) {
 //            _bias[i] = 0;
 //            for (int j = 0; j < dim; j++) {
@@ -194,6 +196,12 @@
         free(inner);
         inner = NULL;
     }
+    
+    // weight decay
+//    double *decay = malloc(sizeof(double) * _dim);
+//    double weight = 1e-4;
+//    vDSP_vsmulD((_theta + type * _dim), 1, &weight, decay, 1, _dim);
+//    vDSP_vaddD(outP, 1, decay, 1, outP, 1, _dim);
     
     return outP;
 }
