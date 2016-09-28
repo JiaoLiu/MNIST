@@ -20,12 +20,15 @@
         _randSize = size == 0 ? 100 : size;
         _bias = malloc(sizeof(double) * type);
         _theta = malloc(sizeof(double) * type * dim);
-        for (int i = 0; i < type; i++) {
-            _bias[i] = 0;
-            for (int j = 0; j < dim; j++) {
-                _theta[i * dim +j] = 0.0f;
-            }
-        }
+        double fillNum = 0.0f;
+        vDSP_vfillD(&fillNum, _bias, 1, type);
+        vDSP_vfillD(&fillNum, _theta, 1, type * dim);
+//        for (int i = 0; i < type; i++) {
+//            _bias[i] = 0;
+//            for (int j = 0; j < dim; j++) {
+//                _theta[i * dim +j] = 0.0f;
+//            }
+//        }
         
         _descentRate = rate == 0 ? 0.01 : rate;
     }
@@ -146,21 +149,19 @@
 - (double)sigmod:(int)type index:(int) index
 {
     double up = 0;
-    for (int i = 0; i < _dim; i++) {
-        up += _theta[type * _dim + i] * _randomX[index][i];
-    }
+    vDSP_mmulD((_theta + type * _dim), 1, _randomX[index], 1, &up, 1, 1, 1, _dim);
+//    for (int i = 0; i < _dim; i++) {
+//        up += _theta[type * _dim + i] * _randomX[index][i];
+//    }
     up += _bias[type];
     
     double *down = malloc(sizeof(double) * _kType);
-    double maxNum = -0xfffffff;
+    double maxNum = 0;
+    double sum = 0;
     vDSP_mmulD(_theta, 1, _randomX[index], 1, down, 1, _kType, 1, _dim);
     vDSP_vaddD(down, 1, _bias, 1, down, 1, _kType);
+    vDSP_maxvD(down, 1, &maxNum, _kType);
     
-    for (int i = 0; i < _kType; i++) {
-        maxNum = MAX(maxNum, down[i]);
-    }
-    
-    double sum = 0;
     for (int i = 0; i < _kType; i++) {
         down[i] -= maxNum;
         sum += exp(down[i]);
@@ -177,9 +178,8 @@
 - (double *)fderivative:(int)type
 {
     double *outP = malloc(sizeof(double) * _dim);
-    for (int i = 0; i < _dim; i++) {
-        outP[i] = 0;
-    }
+    double fillNum = 0.0f;
+    vDSP_vfillD(&fillNum, outP, 1, _dim);
     
     double *inner = malloc(sizeof(double) * _dim);
     for (int i = 0; i < _randSize; i++) {
@@ -206,9 +206,11 @@
         [self randomPick:_trainNum];
         for (int j = 0; j < _kType; j++) {
             double *newTheta = [self fderivative:j];
-            for (int m = 0; m < _dim; m++) {
-                _theta[j * _dim + m] = _theta[j * _dim + m] - _descentRate * newTheta[m];
-            }
+            vDSP_vsmulD(newTheta, 1, &_descentRate, newTheta, 1, _dim);
+            vDSP_vsubD(newTheta, 1, (_theta + j * _dim), 1, (_theta + j * _dim), 1, _dim);
+//            for (int m = 0; m < _dim; m++) {
+//                _theta[j * _dim + m] = _theta[j * _dim + m] - _descentRate * newTheta[m];
+//            }
             if (newTheta != NULL) {
                 free(newTheta);
                 newTheta = NULL;
@@ -232,34 +234,24 @@
 
 - (int)predict:(double *)image
 {
-    double maxNum = -0xffffff;
-    int label = -1;
+    double maxNum = 0;
+    vDSP_Length label = 0;
     double *index = malloc(sizeof(double) * _kType);
     vDSP_mmulD(_theta, 1, image, 1, index, 1, _kType, 1, _dim);
     vDSP_vaddD(index, 1, _bias, 1, index, 1, _kType);
-    for (int i = 0; i < _kType; i++) {
-        if (index[i] > maxNum) {
-            maxNum = index[i];
-            label = i;
-        }
-    }
-    return label;
+    vDSP_maxviD(index, 1, &maxNum, &label, _kType);
+    return (int)label;
 }
 
 - (int)predict:(double *)image withOldTheta:(double *)theta andBias:(double *)bias
 {
-    double maxNum = -0xffffff;
-    int label = -1;
+    double maxNum = 0;
+    vDSP_Length label = 0;
     double *index = malloc(sizeof(double) * _kType);
     vDSP_mmulD(theta, 1, image, 1, index, 1, _kType, 1, _dim);
     vDSP_vaddD(index, 1, bias, 1, index, 1, _kType);
-    for (int i = 0; i < _kType; i++) {
-        if (index[i] > maxNum) {
-            maxNum = index[i];
-            label = i;
-        }
-    }
-    return label;
+    vDSP_maxviD(index, 1, &maxNum, &label, _kType);
+    return (int)label;
 }
 
 @end
