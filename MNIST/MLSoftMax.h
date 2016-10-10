@@ -20,6 +20,7 @@
     int *_randomY;
     double *_theta;
     double *_bias;
+    MLCnn *_cnn;
 }
 
 @property (nonatomic, assign) double **image;

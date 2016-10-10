@@ -48,7 +48,7 @@ static const int testNum = 10000;
         double **trainImage = readImageData([[bundlepPath stringByAppendingString:@"/train-images-idx3-ubyte"] UTF8String]);
         int *trainLabel = readLabelData([[bundlepPath stringByAppendingString:@"/train-labels-idx1-ubyte"] UTF8String]);
         
-        softMax = [[MLSoftMax alloc] initWithLoopNum:[_LoopNumText.text intValue] dim:28*28 type:10 size:[_LoopSizeText.text intValue] descentRate:[_DrateText.text doubleValue]];
+        softMax = [[MLSoftMax alloc] initWithLoopNum:[_LoopNumText.text intValue] dim:120 type:10 size:[_LoopSizeText.text intValue] descentRate:[_DrateText.text doubleValue]];
         softMax.image = trainImage;
         softMax.label = trainLabel;
         softMax.trainNum = trainNum;
@@ -101,10 +101,11 @@ static const int testNum = 10000;
             _outputView.text = [[_outputView text] stringByAppendingFormat:@"Correct Ratio：%f%%\n",correct / 100.0];
         });
         printf("%f\n",correct / 10000.0);
+
 /*
         if (!softMax) {
             softMax = [[MLSoftMax alloc] init];
-            softMax.dim = 28 * 28;
+            softMax.dim = 120;
             softMax.kType = 10;
         }
         

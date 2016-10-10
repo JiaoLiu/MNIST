@@ -18,21 +18,20 @@
         _dim = dim;
         _kType = type;
         _randSize = size == 0 ? 100 : size;
+        _descentRate = rate == 0 ? 0.01 : rate;
         _bias = malloc(sizeof(double) * type);
         _theta = malloc(sizeof(double) * type * dim);
-        double fillNum = [MLCnn truncated_normal:0 dev:0.1];
-        vDSP_vfillD(&fillNum, _theta, 1, type * dim);
-        fillNum = 0.1f;
+        double fillNum = 0.0f;
         vDSP_vfillD(&fillNum, _bias, 1, type);
-        
+        vDSP_vfillD(&fillNum, _theta, 1, type * dim);
 //        for (int i = 0; i < type; i++) {
 //            _bias[i] = 0;
 //            for (int j = 0; j < dim; j++) {
 //                _theta[i * dim +j] = 0.0f;
 //            }
 //        }
-        
-        _descentRate = rate == 0 ? 0.01 : rate;
+        _cnn = [[MLCnn alloc] initWithFilters:@[@[@5,@5,@10],
+                                                @[@5,@5,@20]] fullConnectSize:_dim row:28 col:28];
     }
     return  self;
 }
@@ -50,6 +49,10 @@
     }
     
     if (_randomX != NULL) {
+        for (int i = 0; i < _randSize; i++) { // with CNN
+            free(_randomX[i]);
+            _randomX[i] = NULL;
+        }
         free(_randomX);
         _randomX = NULL;
     }
@@ -67,52 +70,60 @@
     long rNum = random();
     for (int i = 0; i < _randSize; i++) {
         _randomX[i] = _image[(rNum+i) % maxSize];
+//        for (int j = 0; j < _dim; j++) {
+//            printf("%f ",_randomX[i][j]);
+//        }
+//        printf("\n\n");
         _randomY[i] = _label[(rNum+i) % maxSize];
     }
 }
-/*
+
 - (double *)MaxPro:(double *)index
 {
-    long double maxNum = index[0];
-    for (int i = 1; i < _kType; i++) {
-        maxNum = MAX(maxNum, index[i]);
-    }
+    double maxNum = 0;
+    vDSP_maxvD(index, 1, &maxNum, _kType);
     
-    long double sum = 0;
+    double sum = 0;
     for (int i = 0; i < _kType; i++) {
         index[i] -= maxNum;
         index[i] = expl(index[i]);
         sum += index[i];
+//        printf("%f ",index[i]);
     }
+//    printf("----\n");
     
-    for (int i = 0; i < _kType; i++) {
-        index[i] /= sum;
-    }
+    vDSP_vsdivD(index, 1, &sum, index, 1, _kType);
     return index;
 }
 
 - (void)updateModel:(double *)index currentPos:(int)pos
 {
-    double *delta = malloc(sizeof(double) * _kType);
     for (int i = 0; i < _kType; i++) {
+        double delta;
         if (i != _randomY[pos]) {
-            delta[i] = 0.0 - index[i];
+            delta = 0.0 - index[i];
         }
         else
         {
-            delta[i] = 1.0 - index[i];
+            delta = 1.0 - index[i];
         }
         
-        _bias[i] -= _descentRate * delta[i];
-        
-        for (int j = 0; j < _dim; j++) {
-            _theta[i * _dim +j] += _descentRate * delta[i] * _randomX[pos][j] / _randSize;
+        _bias[i] += _descentRate * delta;
+        double loss = _descentRate * delta / _randSize;
+        double *decay = malloc(sizeof(double) * _dim);
+        vDSP_vsmulD(_randomX[pos], 1, &loss, decay, 1, _dim);
+        double *backLoss = malloc(sizeof(double) * _dim);
+        vDSP_vsmulD((_theta + i * _dim), 1, &loss, backLoss, 1, _dim);
+//        for (int k = 0; k < _dim; k++) {
+//            printf("%f ", backLoss[k]);
+//        }
+//        printf("\n%d-------\n",pos);
+        [_cnn backPropagation:backLoss];
+        vDSP_vaddD((_theta + i * _dim), 1, decay, 1, (_theta + i * _dim), 1, _dim);
+        if (decay != NULL) {
+            free(decay);
+            decay = NULL;
         }
-    }
-    
-    if (delta != NULL) {
-        free(delta);
-        delta = NULL;
     }
 }
 
@@ -126,11 +137,18 @@
         [self randomPick:_trainNum];
         for (int j = 0; j < _randSize; j++) {
             // calculate wx+b
+            _randomX[j] = [_cnn filterImage:_randomX[j]];
             vDSP_mmulD(_theta, 1, _randomX[j], 1, index, 1, _kType, 1, _dim);
             vDSP_vaddD(index, 1, _bias, 1, index, 1, _kType);
-            
+            // calulate exp(wx+b) / sum(exp(wx+b))
             index = [self MaxPro:index];
             [self updateModel:index currentPos:j];
+//            for (int m = 0; m < _kType; m++) {
+//                for (int n = 0; n < _dim; n++) {
+//                    printf("%f ", _theta[m*_dim + n]);
+//                }
+//                printf("\n%d:=====\n",j);
+//            }
         }
     }
     if (index != NULL) {
@@ -138,8 +156,8 @@
         index = NULL;
     }
 }
-*/
 
+/*
 - (int)indicator:(int)label var:(int)x
 {
     if (label == x) {
@@ -148,7 +166,7 @@
     return 0;
 }
 
-- (double)sigmod:(int)type index:(int) index
+- (double)sumSig:(int)type index:(int) index
 {
     double up = 0;
     vDSP_mmulD((_theta + type * _dim), 1, _randomX[index], 1, &up, 1, 1, 1, _dim);
@@ -165,16 +183,18 @@
     vDSP_maxvD(down, 1, &maxNum, _kType);
     
     for (int i = 0; i < _kType; i++) {
+        printf("%d:%f ",i,down[i]);
         down[i] -= maxNum;
-        sum += exp(down[i]);
+        sum += expl(down[i]);
     }
-    
+    printf("\n");
+ 
     if (down != NULL) {
         free(down);
         down = NULL;
     }
     
-    return exp(up - maxNum) / sum;
+    return expl(up - maxNum) / sum;
 }
 
 - (double *)fderivative:(int)type
@@ -185,7 +205,7 @@
     
     double *inner = malloc(sizeof(double) * _dim);
     for (int i = 0; i < _randSize; i++) {
-        long double sig = [self sigmod:type index:i];
+        long double sig = [self sumSig:type index:i];
         int ind = [self indicator:_randomY[i] var:type];
         double loss = -_descentRate * (ind - sig) / _randSize;
         _bias[type] += loss * _randSize;
@@ -226,7 +246,7 @@
         }
     }
 }
-
+*/
 - (void)saveTrainDataToDisk
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -245,9 +265,19 @@
     double maxNum = 0;
     vDSP_Length label = 0;
     double *index = malloc(sizeof(double) * _kType);
-    vDSP_mmulD(_theta, 1, image, 1, index, 1, _kType, 1, _dim);
+//    vDSP_mmulD(_theta, 1, image, 1, index, 1, _kType, 1, _dim);
+    if (!_cnn) {
+        _cnn = [[MLCnn alloc] initWithFilters:@[@[@5,@5,@10],
+                                                @[@5,@5,@20]] fullConnectSize:_dim row:28 col:28];
+    }
+    double *input = [_cnn filterImage:image];
+    vDSP_mmulD(_theta, 1, input, 1, index, 1, _kType, 1, _dim);
     vDSP_vaddD(index, 1, _bias, 1, index, 1, _kType);
     vDSP_maxviD(index, 1, &maxNum, &label, _kType);
+    if (input != NULL) {
+        free(input);
+        input = NULL;
+    }
     return (int)label;
 }
 
@@ -257,8 +287,18 @@
     vDSP_Length label = 0;
     double *index = malloc(sizeof(double) * _kType);
     vDSP_mmulD(theta, 1, image, 1, index, 1, _kType, 1, _dim);
+//    if (!_cnn) {
+//        _cnn = [[MLCnn alloc] initWithFilters:@[@[@5,@5,@10],
+//                                                @[@5,@5,@20]] fullConnectSize:_dim row:28 col:28];
+//    }
+//    double *input = [_cnn filterImage:image];
+//    vDSP_mmulD(_theta, 1, input, 1, index, 1, _kType, 1, _dim);
     vDSP_vaddD(index, 1, bias, 1, index, 1, _kType);
     vDSP_maxviD(index, 1, &maxNum, &label, _kType);
+//    if (input != NULL) {
+//        free(input);
+//        input = NULL;
+//    }
     return (int)label;
 }
 
