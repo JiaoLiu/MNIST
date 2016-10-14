@@ -19,19 +19,15 @@
         _kType = type;
         _randSize = size == 0 ? 100 : size;
         _descentRate = rate == 0 ? 0.01 : rate;
+//        _bias = [MLCnn bias_init:type];
+//        _theta = [MLCnn weight_init:type * dim];
         _bias = malloc(sizeof(double) * type);
         _theta = malloc(sizeof(double) * type * dim);
         double fillNum = 0.0f;
         vDSP_vfillD(&fillNum, _bias, 1, type);
         vDSP_vfillD(&fillNum, _theta, 1, type * dim);
-//        for (int i = 0; i < type; i++) {
-//            _bias[i] = 0;
-//            for (int j = 0; j < dim; j++) {
-//                _theta[i * dim +j] = 0.0f;
-//            }
-//        }
-        _cnn = [[MLCnn alloc] initWithFilters:@[@[@5,@5,@10],
-                                                @[@5,@5,@20]] fullConnectSize:_dim row:28 col:28];
+        _cnn = [[MLCnn alloc] initWithFilters:@[@[@5,@5,@6],
+                                                @[@5,@5,@16]] fullConnectSize:_dim row:28 col:28 keepRate:0.5];
     }
     return  self;
 }
@@ -49,10 +45,6 @@
     }
     
     if (_randomX != NULL) {
-        for (int i = 0; i < _randSize; i++) { // with CNN
-            free(_randomX[i]);
-            _randomX[i] = NULL;
-        }
         free(_randomX);
         _randomX = NULL;
     }
@@ -137,7 +129,7 @@
         [self randomPick:_trainNum];
         for (int j = 0; j < _randSize; j++) {
             // calculate wx+b
-            _randomX[j] = [_cnn filterImage:_randomX[j]];
+            _randomX[j] = [_cnn filterImage:_randomX[j] state:YES];
             vDSP_mmulD(_theta, 1, _randomX[j], 1, index, 1, _kType, 1, _dim);
             vDSP_vaddD(index, 1, _bias, 1, index, 1, _kType);
             // calulate exp(wx+b) / sum(exp(wx+b))
@@ -149,6 +141,9 @@
 //                }
 //                printf("\n%d:=====\n",j);
 //            }
+        }
+        if (i%100 == 0) {
+            [self testModel];
         }
     }
     if (index != NULL) {
@@ -260,24 +255,33 @@
     [fileManager createFileAtPath:biasPath contents:data attributes:nil];
 }
 
+- (void)testModel
+{
+    [self randomPick:_trainNum];
+    double correct = 0;
+    for (int i = 0; i < _randSize; i++) {
+        int pred = [self predict:_randomX[i]];
+        if (pred == _randomY[i]) {
+            correct++;
+        }
+    }
+    printf("%f%%\n", correct/_randSize * 100.0);
+}
+
 - (int)predict:(double *)image
 {
     double maxNum = 0;
     vDSP_Length label = 0;
     double *index = malloc(sizeof(double) * _kType);
 //    vDSP_mmulD(_theta, 1, image, 1, index, 1, _kType, 1, _dim);
-    if (!_cnn) {
-        _cnn = [[MLCnn alloc] initWithFilters:@[@[@5,@5,@10],
-                                                @[@5,@5,@20]] fullConnectSize:_dim row:28 col:28];
-    }
-    double *input = [_cnn filterImage:image];
+    double *input = [_cnn filterImage:image state:NO];
     vDSP_mmulD(_theta, 1, input, 1, index, 1, _kType, 1, _dim);
     vDSP_vaddD(index, 1, _bias, 1, index, 1, _kType);
     vDSP_maxviD(index, 1, &maxNum, &label, _kType);
-    if (input != NULL) {
-        free(input);
-        input = NULL;
-    }
+//    if (input != NULL) {
+//        free(input);
+//        input = NULL;
+//    }
     return (int)label;
 }
 
