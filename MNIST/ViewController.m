@@ -10,6 +10,7 @@
 #import "MLLoadMNIST.h"
 #import <Accelerate/Accelerate.h>
 #import "MLSoftMax.h"
+#import "MLDetectViewController.h"
 
 static const int trainNum = 60000;
 static const int testNum = 10000;
@@ -156,6 +157,14 @@ static const int testNum = 10000;
             testLabel = NULL;
         }
     });
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"ShowDetectVC"]) {
+        MLDetectViewController *detectVC = [[(UINavigationController *)segue.destinationViewController viewControllers] objectAtIndex:0];
+        detectVC.softMax = softMax;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
