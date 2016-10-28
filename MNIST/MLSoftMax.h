@@ -34,5 +34,6 @@
 - (int)predict:(double *)image;
 - (void)saveTrainDataToDisk;
 - (int)predict:(double *)image withOldTheta:(double *)theta andBias:(double *)bias;
+- (void)updateModel:(double *)image label:(int)label;
 
 @end
