@@ -138,14 +138,14 @@
                                     </mask>
                                 </variation>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="结果：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UZ8-6a-xhh">
-                                <rect key="frame" x="150" y="438" width="51" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Result：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UZ8-6a-xhh">
+                                <rect key="frame" x="150" y="438" width="65" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A4h-ch-LRG">
-                                <rect key="frame" x="209" y="459" width="42" height="0.0"/>
+                                <rect key="frame" x="223" y="459" width="42" height="0.0"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="42" id="fTF-sF-Vqt"/>
                                 </constraints>
@@ -153,6 +153,14 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BWk-vh-SVz">
+                                <rect key="frame" x="392" y="433" width="58" height="33"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="Correct"/>
+                                <connections>
+                                    <action selector="UpdateBtnClicked:" destination="7cA-0O-VvR" eventType="touchUpInside" id="gEn-B7-1jQ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -163,7 +171,9 @@
                             <constraint firstItem="A4h-ch-LRG" firstAttribute="leading" secondItem="UZ8-6a-xhh" secondAttribute="trailing" constant="8" symbolic="YES" id="LvN-Pg-7mc"/>
                             <constraint firstItem="A4h-ch-LRG" firstAttribute="baseline" secondItem="UZ8-6a-xhh" secondAttribute="baseline" id="PLo-MH-ji8"/>
                             <constraint firstItem="UZ8-6a-xhh" firstAttribute="top" secondItem="rXB-ni-VtE" secondAttribute="bottom" constant="28" id="SUE-p2-MGm"/>
+                            <constraint firstItem="BWk-vh-SVz" firstAttribute="trailing" secondItem="rXB-ni-VtE" secondAttribute="trailing" id="WWi-Yj-Cbf"/>
                             <constraint firstItem="rXB-ni-VtE" firstAttribute="top" secondItem="xbu-hc-LIH" secondAttribute="bottom" constant="46" id="fiB-Q8-I46"/>
+                            <constraint firstItem="BWk-vh-SVz" firstAttribute="top" secondItem="rXB-ni-VtE" secondAttribute="bottom" constant="23" id="jmT-oQ-EpZ"/>
                             <constraint firstItem="0UD-jn-nte" firstAttribute="top" secondItem="Ujg-2W-L57" secondAttribute="bottom" id="vdh-jB-J9y"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ujg-2W-L57" secondAttribute="trailing" constant="-20" id="yGG-yM-Rvg"/>
                         </constraints>

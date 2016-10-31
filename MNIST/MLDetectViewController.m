@@ -13,10 +13,35 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _imagePixels = NULL;
+}
+
+- (void)dealloc
+{
+    if (_imagePixels != NULL) {
+        free(_imagePixels);
+        _imagePixels = NULL;
+    }
 }
 
 - (IBAction)BackBtnClicked:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)UpdateBtnClicked:(id)sender {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Input Correct Num" message:nil delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:@"Done", nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [[alert textFieldAtIndex:0] setClearButtonMode:UITextFieldViewModeWhileEditing];
+    [[alert textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    int corret = [[[alertView textFieldAtIndex:0] text] intValue] % 10;
+    if (buttonIndex == 1) {
+        [_softMax updateModel:_imagePixels label:corret];
+    }
 }
 
 - (IBAction)CameraPick:(id)sender {
@@ -51,13 +76,13 @@
     [image drawInRect:CGRectMake(0, 0, sz.width, sz.height)];
     compressedImg = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    double *imagePixels = [self getGrayImagePixel:compressedImg];
-    _resultLabel.text = [NSString stringWithFormat:@"%d", [_softMax predict:imagePixels]];
-//    _presentedImage.image = compressedImg;
-    if (imagePixels != NULL) {
-        free(imagePixels);
-        imagePixels = NULL;
+    if (_imagePixels != NULL) {
+        free(_imagePixels);
+        _imagePixels = NULL;
     }
+    _imagePixels = [self getGrayImagePixel:compressedImg];
+    _resultLabel.text = [NSString stringWithFormat:@"%d", [_softMax predict:_imagePixels]];
+//    _presentedImage.image = compressedImg;
 }
 
 - (double *)getGrayImagePixel:(UIImage *)image
